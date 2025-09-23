@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Plane, Settings, LogOut, Shield, Plus, CloudRain, Wind, Sun, Thermometer, Droplets, Battery, Activity, RefreshCw, MapPin, Wifi, WifiOff, Edit2, Trash2, Save, X, User, Mail, Phone, Lock, CheckCircle, AlertCircle, Menu, Zap, Gauge, ArrowLeft } from 'lucide-react';
+import { Home, Plane, Settings, LogOut, Shield, Plus, CloudRain, Wind, Sun, Thermometer, Droplets, Battery, Activity, RefreshCw, MapPin, Wifi, WifiOff, Edit2, Trash2, Save, X, User, Mail, Phone, Lock, CheckCircle, AlertCircle, Menu, Zap, Gauge, ArrowLeft, Eye, Filter, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,6 +14,7 @@ import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import DroneControl from '../components/drone-control';
 import AIRecommendationsPanel from '../components/AIRecommendationsPanel';
 import SensorDetailModal from '../components/SensorDetailModal';
@@ -63,6 +64,7 @@ export default function Dashboard() {
   const [showAddStation, setShowAddStation] = useState(false);
   const [editingStation, setEditingStation] = useState<Station | null>(null);
   const [newStation, setNewStation] = useState({ name: '', location: '' });
+  const [stationSearchTerm, setStationSearchTerm] = useState('');
 
   // Sensor data
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
@@ -70,6 +72,7 @@ export default function Dashboard() {
   const [connected, setConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<string>('all');
 
   // Sensor detail modal
   const [selectedSensor, setSelectedSensor] = useState<{
@@ -509,7 +512,7 @@ export default function Dashboard() {
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">Weather Conditions</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'temperature',
                       title: 'Temperature',
@@ -519,19 +522,22 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Temperature</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Temperature
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Thermometer className="w-5 h-5 text-red-500" />
                         {latestData?.temperature_C?.toFixed(1) || '--'}°C
                       </div>
-                      <p className="text-xs text-gray-500">Current reading</p>
+                      <p className="text-xs text-gray-500">Current reading • Click for details</p>
                     </CardContent>
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'humidity',
                       title: 'Humidity',
@@ -541,19 +547,22 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Humidity</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Humidity
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Droplets className="w-5 h-5 text-blue-500" />
                         {latestData?.humidity_?.toFixed(0) || '--'}%
                       </div>
-                      <p className="text-xs text-gray-500">Relative humidity</p>
+                      <p className="text-xs text-gray-500">Relative humidity • Click for details</p>
                     </CardContent>
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'wind',
                       title: 'Wind Speed',
@@ -563,7 +572,10 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Wind Speed</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Wind Speed
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
@@ -575,7 +587,7 @@ export default function Dashboard() {
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'rain',
                       title: 'Rain Rate',
@@ -585,14 +597,17 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Rain Rate</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Rain Rate
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <CloudRain className="w-5 h-5 text-blue-600" />
                         {latestData?.rainrate_mm_h?.toFixed(1) || '--'} mm/h
                       </div>
-                      <p className="text-xs text-gray-500">Current precipitation</p>
+                      <p className="text-xs text-gray-500">Current precipitation • Click for details</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -603,7 +618,7 @@ export default function Dashboard() {
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">Solar & Light Monitoring</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'light',
                       title: 'Light Intensity',
@@ -613,19 +628,22 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Light Intensity</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Light Intensity
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Sun className="w-5 h-5 text-yellow-500" />
                         {latestData?.light_lux?.toFixed(0) || '--'}
                       </div>
-                      <p className="text-xs text-gray-500">Lux</p>
+                      <p className="text-xs text-gray-500">Lux • Click for details</p>
                     </CardContent>
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'voltage',
                       title: 'Solar Voltage',
@@ -635,19 +653,22 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Solar Voltage</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Solar Voltage
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Battery className="w-5 h-5 text-green-500" />
                         {latestData?.sol_voltage_V?.toFixed(1) || '--'} V
                       </div>
-                      <p className="text-xs text-gray-500">Panel voltage</p>
+                      <p className="text-xs text-gray-500">Panel voltage • Click for details</p>
                     </CardContent>
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'current',
                       title: 'Solar Current',
@@ -657,19 +678,22 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Solar Current</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Solar Current
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Gauge className="w-5 h-5 text-orange-500" />
                         {latestData?.sol_current_mA?.toFixed(0) || '--'} mA
                       </div>
-                      <p className="text-xs text-gray-500">Current flow</p>
+                      <p className="text-xs text-gray-500">Current flow • Click for details</p>
                     </CardContent>
                   </Card>
 
                   <Card
-                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'solar',
                       title: 'Solar Power',
@@ -679,14 +703,17 @@ export default function Dashboard() {
                     })}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">Solar Power</CardTitle>
+                      <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
+                        Solar Power
+                        <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Zap className="w-5 h-5 text-purple-500" />
                         {latestData?.sol_power_W?.toFixed(2) || '--'} W
                       </div>
-                      <p className="text-xs text-gray-500">Power generation</p>
+                      <p className="text-xs text-gray-500">Power generation • Click for details</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -819,11 +846,38 @@ export default function Dashboard() {
               {/* Real-time Sensor Data Table */}
               <Card className="mt-6">
                 <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Real-time Sensor Readings</CardTitle>
-                    <Badge variant={loading ? "secondary" : connected ? "default" : "secondary"}>
-                      {loading ? 'Loading...' : connected ? 'Connected' : 'Disconnected'}
-                    </Badge>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <CardTitle>Latest 10 Sensor Readings</CardTitle>
+                        {lastUpdate && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            Last updated: {lastUpdate.toLocaleTimeString()}
+                          </p>
+                        )}
+                      </div>
+                      <Badge variant={loading ? "secondary" : connected ? "default" : "secondary"}>
+                        {loading ? 'Loading...' : connected ? 'Connected' : 'Disconnected'}
+                      </Badge>
+                    </div>
+                    {userDevices && userDevices.length > 1 && (
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="device-select" className="text-sm font-medium">Device:</Label>
+                        <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+                          <SelectTrigger id="device-select" className="w-[200px]">
+                            <SelectValue placeholder="Select device" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Devices</SelectItem>
+                            {userDevices.map(device => (
+                              <SelectItem key={device} value={device}>
+                                {device}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -842,7 +896,10 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {sensorData.slice(0, 10).map((data) => (
+                        {sensorData
+                          .filter(data => selectedDevice === 'all' || data.device_id === selectedDevice)
+                          .slice(0, 10)
+                          .map((data) => (
                           <tr key={data.id} className="hover:bg-gray-50">
                             <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                               {data.device_id}
@@ -1155,64 +1212,156 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Station Metrics */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {/* Weather Metrics */}
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-3">Weather Conditions</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Temperature</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Thermometer className="w-5 h-5 text-red-500" />
+                          {stationData?.temperature_C?.toFixed(1) || '--'}°C
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Humidity</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Droplets className="w-5 h-5 text-blue-500" />
+                          {stationData?.humidity_?.toFixed(0) || '--'}%
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Wind Speed</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Wind className="w-5 h-5 text-gray-500" />
+                          {stationData?.wind_kmh?.toFixed(1) || '--'} km/h
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Rain Rate</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <CloudRain className="w-5 h-5 text-blue-600" />
+                          {stationData?.rainrate_mm_h?.toFixed(1) || '--'} mm/h
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Solar & Light Metrics */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-3">Solar & Light Monitoring</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Light Intensity</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Sun className="w-5 h-5 text-yellow-500" />
+                          {stationData?.light_lux?.toFixed(0) || '--'} Lux
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Solar Voltage</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Battery className="w-5 h-5 text-green-500" />
+                          {stationData?.sol_voltage_V?.toFixed(1) || '--'} V
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Solar Current</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Gauge className="w-5 h-5 text-orange-500" />
+                          {stationData?.sol_current_mA?.toFixed(0) || '--'} mA
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Solar Power</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                          <Zap className="w-5 h-5 text-purple-500" />
+                          {stationData?.sol_power_W?.toFixed(2) || '--'} W
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Station Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Temperature</CardTitle>
+                    <CardHeader>
+                      <CardTitle>Weather Trends</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-xl md:text-2xl font-bold">{stationData?.temperature_C?.toFixed(1) || '--'}°C</div>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={stationChartData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="time" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line type="monotone" dataKey="temperature" stroke="#ef4444" name="Temperature (°C)" strokeWidth={2} />
+                          <Line type="monotone" dataKey="humidity" stroke="#3b82f6" name="Humidity (%)" strokeWidth={2} />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </CardContent>
                   </Card>
 
                   <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Humidity</CardTitle>
+                    <CardHeader>
+                      <CardTitle>Solar Power Generation</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-xl md:text-2xl font-bold">{stationData?.humidity_?.toFixed(0) || '--'}%</div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Wind Speed</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-xl md:text-2xl font-bold">{stationData?.wind_kmh?.toFixed(1) || '--'} km/h</div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Rain Rate</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-xl md:text-2xl font-bold">{stationData?.rainrate_mm_h?.toFixed(1) || '--'} mm/h</div>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={stationChartData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="time" />
+                          <YAxis yAxisId="left" />
+                          <YAxis yAxisId="right" orientation="right" />
+                          <Tooltip />
+                          <Legend />
+                          <Line yAxisId="left" type="monotone" dataKey="power" stroke="#a855f7" name="Power (W)" strokeWidth={2} />
+                          <Line yAxisId="left" type="monotone" dataKey="voltage" stroke="#22c55e" name="Voltage (V)" strokeWidth={2} />
+                          <Line yAxisId="right" type="monotone" dataKey="light" stroke="#fbbf24" name="Light (Lux)" strokeWidth={2} />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </CardContent>
                   </Card>
                 </div>
-
-                {/* Station Chart */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Station Data Trends</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <AreaChart data={stationChartData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="time" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Area type="monotone" dataKey="temperature" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} name="Temperature (°C)" />
-                        <Area type="monotone" dataKey="humidity" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} name="Humidity (%)" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
               </div>
             </div>
           );
@@ -1325,9 +1474,30 @@ export default function Dashboard() {
                 {!profileComplete && <AlertCircle className="w-4 h-4 ml-auto text-orange-500" />}
               </button>
 
-              <div className="mt-3 mb-1 text-xs font-semibold uppercase tracking-wide text-green-100">Stasiun Cuaca</div>
+              <div className="mt-3 mb-1">
+                <div className="text-xs font-semibold uppercase tracking-wide text-green-100 mb-2">Stasiun Cuaca</div>
+                {stations.length > 3 && (
+                  <div className="px-3 py-1 mb-2">
+                    <div className="relative">
+                      <Search className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-green-700" />
+                      <input
+                        type="text"
+                        placeholder="Search stations..."
+                        value={stationSearchTerm}
+                        onChange={(e) => setStationSearchTerm(e.target.value)}
+                        className="w-full pl-8 pr-3 py-1 text-sm rounded-md bg-white/90 text-green-900 placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-white"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              {stations.map((station) => (
+              {stations
+                .filter(station =>
+                  station.name.toLowerCase().includes(stationSearchTerm.toLowerCase()) ||
+                  station.location.toLowerCase().includes(stationSearchTerm.toLowerCase())
+                )
+                .map((station) => (
                 <button
                   key={station.id}
                   className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal transition-all duration-150 text-left ${
@@ -1342,6 +1512,15 @@ export default function Dashboard() {
                   <span className="truncate font-normal">{station.name}</span>
                 </button>
               ))}
+
+              {stationSearchTerm && stations.filter(station =>
+                station.name.toLowerCase().includes(stationSearchTerm.toLowerCase()) ||
+                station.location.toLowerCase().includes(stationSearchTerm.toLowerCase())
+              ).length === 0 && (
+                <div className="px-3 py-2 text-sm text-green-100 text-center">
+                  No stations found
+                </div>
+              )}
 
               <button
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal transition-all duration-150 text-left mt-3 ${
