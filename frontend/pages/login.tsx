@@ -29,6 +29,12 @@ export default function Login() {
   const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
   const turnstileRef = useRef<HTMLDivElement>(null);
 
+  // Check if we're in development mode (localhost)
+  const isDevelopment = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+     window.location.hostname === '127.0.0.1' ||
+     window.location.hostname.startsWith('192.168.'));
+
   useEffect(() => {
     // Check for message in query params
     if (router.query.message) {
@@ -37,6 +43,9 @@ export default function Login() {
   }, [router.query]);
 
   useEffect(() => {
+    // Only initialize Turnstile in production
+    if (isDevelopment) return;
+
     // Initialize Turnstile widget when component mounts
     const initTurnstile = () => {
       if (window.turnstile && turnstileRef.current && !turnstileWidgetId) {
@@ -66,7 +75,7 @@ export default function Login() {
 
       return () => clearInterval(checkInterval);
     }
-  }, [turnstileWidgetId]);
+  }, [turnstileWidgetId, isDevelopment]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,49 +83,54 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Get Turnstile token using the widget API
-      let turnstileResponse = null;
+      // Skip Turnstile verification in development
+      if (!isDevelopment) {
+        // Get Turnstile token using the widget API
+        let turnstileResponse = null;
 
-      if (window.turnstile && turnstileWidgetId !== null) {
-        turnstileResponse = window.turnstile.getResponse(turnstileWidgetId);
-      }
-
-      if (!turnstileResponse) {
-        setError('Please complete the security verification');
-        setIsLoading(false);
-        // Reset the Turnstile widget using the widget ID
         if (window.turnstile && turnstileWidgetId !== null) {
-          window.turnstile.reset(turnstileWidgetId);
+          turnstileResponse = window.turnstile.getResponse(turnstileWidgetId);
         }
-        return;
+
+        if (!turnstileResponse) {
+          setError('Please complete the security verification');
+          setIsLoading(false);
+          // Reset the Turnstile widget using the widget ID
+          if (window.turnstile && turnstileWidgetId !== null) {
+            window.turnstile.reset(turnstileWidgetId);
+          }
+          return;
+        }
+
+        // Verify Turnstile token
+        const verifyResponse = await fetch('/api/verify-turnstile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: turnstileResponse,
+          }),
+        });
+
+        const verifyResult = await verifyResponse.json();
+
+        if (!verifyResult.success) {
+          setError('Security verification failed. Please try again.');
+          // Reset the Turnstile widget using the widget ID
+          if (window.turnstile && turnstileWidgetId !== null) {
+            window.turnstile.reset(turnstileWidgetId);
+          }
+          setIsLoading(false);
+          return;
+        }
+        console.log('Login successful with Turnstile protection');
+      } else {
+        console.log('Development mode: Skipping Turnstile verification');
       }
 
-      // Verify Turnstile token
-      const verifyResponse = await fetch('/api/verify-turnstile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: turnstileResponse,
-        }),
-      });
-
-      const verifyResult = await verifyResponse.json();
-
-      if (!verifyResult.success) {
-        setError('Security verification failed. Please try again.');
-        // Reset the Turnstile widget using the widget ID
-        if (window.turnstile && turnstileWidgetId !== null) {
-          window.turnstile.reset(turnstileWidgetId);
-        }
-        setIsLoading(false);
-        return;
-      }
-
-      // Proceed with sign in if Turnstile verification passed
+      // Proceed with sign in
       await signIn(formData.email, formData.password);
-      console.log('Login successful with Turnstile protection');
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
         setError('User not found. Please contact admin to create an account.');
@@ -201,10 +215,16 @@ export default function Login() {
                   {error}
                 </div>
               )}
-              <div
-                ref={turnstileRef}
-                className="cf-turnstile"
-              ></div>
+              {!isDevelopment ? (
+                <div
+                  ref={turnstileRef}
+                  className="cf-turnstile"
+                ></div>
+              ) : (
+                <div className="p-2 text-xs text-gray-500 bg-yellow-50 border border-yellow-200 rounded text-center">
+                  Development Mode: Security verification disabled
+                </div>
+              )}
               <Button
                 type="submit"
                 className="w-full bg-[#2ecc71] hover:bg-[#27ae60] mt-4"
@@ -233,9 +253,11 @@ export default function Login() {
                 </a>
               </p>
             </div>
-            <div className="mt-4 text-center text-xs text-gray-500">
-              This site is protected by Cloudflare Turnstile.
-            </div>
+            {!isDevelopment && (
+              <div className="mt-4 text-center text-xs text-gray-500">
+                This site is protected by Cloudflare Turnstile.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

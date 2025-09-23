@@ -13,11 +13,9 @@ import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import dynamic from 'next/dynamic';
-
-const DroneControl = dynamic(() => import('../components/drone-control'), {
-  ssr: false
-});
+import DroneControl from '../components/drone-control';
+import AIRecommendationsPanel from '../components/AIRecommendationsPanel';
+import SensorDetailModal from '../components/SensorDetailModal';
 
 interface Station {
   id: string;
@@ -30,16 +28,24 @@ interface Station {
 interface SensorData {
   id: string;
   device_id: string;
-  timestamp: string;
-  wind_m_s: number;
-  wind_kmh: number;
-  rainrate_mm_h: number;
-  temperature_C: number;
-  humidity_: number;
-  light_lux: number;
-  sol_voltage_V: number;
-  sol_current_mA: number;
-  sol_power_W: number;
+  timestamp: string | number;
+  temperature?: number;
+  temperature_C?: number;
+  humidity?: number;
+  humidity_?: number;
+  wind_m_s?: number;
+  wind_kmh?: number;
+  rainrate_mm_h?: number;
+  light_lux?: number;
+  sol_voltage_V?: number;
+  sol_current_mA?: number;
+  sol_power_W?: number;
+  nitrogen?: number;
+  phosphorus?: number;
+  potassium?: number;
+  ph?: number;
+  rainfall?: number;
+  soil_moisture?: number;
   received_at?: string;
 }
 
@@ -63,6 +69,15 @@ export default function Dashboard() {
   const [connected, setConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Sensor detail modal
+  const [selectedSensor, setSelectedSensor] = useState<{
+    type: string;
+    title: string;
+    unit: string;
+    icon: React.ReactNode;
+    value: any;
+  } | null>(null);
 
   // User settings
   const [userProfile, setUserProfile] = useState({
@@ -315,10 +330,29 @@ export default function Dashboard() {
   };
 
   const getLatestData = (stationId?: string) => {
+    let data;
     if (stationId) {
-      return sensorData.find(d => d.device_id === stationId) || sensorData[0];
+      data = sensorData.find(d => d.device_id === stationId) || sensorData[0];
+    } else {
+      data = sensorData[0];
     }
-    return sensorData[0];
+
+    // Normalize field names for compatibility
+    if (data) {
+      return {
+        ...data,
+        temperature_C: data.temperature_C ?? data.temperature ?? 0,
+        humidity_: data.humidity_ ?? data.humidity ?? 0,
+        wind_m_s: data.wind_m_s ?? 0,
+        wind_kmh: data.wind_kmh ?? 0,
+        rainrate_mm_h: data.rainrate_mm_h ?? data.rainfall ?? 0,
+        light_lux: data.light_lux ?? 0,
+        sol_voltage_V: data.sol_voltage_V ?? 0,
+        sol_current_mA: data.sol_current_mA ?? 0,
+        sol_power_W: data.sol_power_W ?? 0
+      };
+    }
+    return data;
   };
 
   const getChartData = (stationId?: string) => {
@@ -473,7 +507,16 @@ export default function Dashboard() {
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">Weather Conditions</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'temperature',
+                      title: 'Temperature',
+                      unit: '°C',
+                      icon: <Thermometer className="w-5 h-5 text-red-500" />,
+                      value: latestData?.temperature_C?.toFixed(1) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Temperature</CardTitle>
                     </CardHeader>
@@ -486,7 +529,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'humidity',
+                      title: 'Humidity',
+                      unit: '%',
+                      icon: <Droplets className="w-5 h-5 text-blue-500" />,
+                      value: latestData?.humidity_?.toFixed(0) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Humidity</CardTitle>
                     </CardHeader>
@@ -499,7 +551,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'wind',
+                      title: 'Wind Speed',
+                      unit: 'km/h',
+                      icon: <Wind className="w-5 h-5 text-gray-500" />,
+                      value: latestData?.wind_kmh?.toFixed(1) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Wind Speed</CardTitle>
                     </CardHeader>
@@ -512,7 +573,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'rain',
+                      title: 'Rain Rate',
+                      unit: 'mm/h',
+                      icon: <CloudRain className="w-5 h-5 text-blue-600" />,
+                      value: latestData?.rainrate_mm_h?.toFixed(1) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Rain Rate</CardTitle>
                     </CardHeader>
@@ -531,7 +601,16 @@ export default function Dashboard() {
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">Solar & Light Monitoring</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'light',
+                      title: 'Light Intensity',
+                      unit: 'Lux',
+                      icon: <Sun className="w-5 h-5 text-yellow-500" />,
+                      value: latestData?.light_lux?.toFixed(0) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Light Intensity</CardTitle>
                     </CardHeader>
@@ -544,7 +623,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'voltage',
+                      title: 'Solar Voltage',
+                      unit: 'V',
+                      icon: <Battery className="w-5 h-5 text-green-500" />,
+                      value: latestData?.sol_voltage_V?.toFixed(1) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Solar Voltage</CardTitle>
                     </CardHeader>
@@ -557,7 +645,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'current',
+                      title: 'Solar Current',
+                      unit: 'mA',
+                      icon: <Gauge className="w-5 h-5 text-orange-500" />,
+                      value: latestData?.sol_current_mA?.toFixed(0) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Solar Current</CardTitle>
                     </CardHeader>
@@ -570,7 +667,16 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedSensor({
+                      type: 'solar',
+                      title: 'Solar Power',
+                      unit: 'W',
+                      icon: <Zap className="w-5 h-5 text-purple-500" />,
+                      value: latestData?.sol_power_W?.toFixed(2) || '--'
+                    })}
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600">Solar Power</CardTitle>
                     </CardHeader>
@@ -777,6 +883,11 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* AI Recommendations Panel */}
+              <div className="mt-6">
+                <AIRecommendationsPanel />
+              </div>
             </div>
           </div>
         );
@@ -1156,15 +1267,14 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex bg-neutral-50 relative">
+      <div className="min-h-screen bg-neutral-50 relative">
         {/* Mobile Menu Overlay */}
         {sidebarOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
         )}
 
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <aside className={`fixed lg:static inset-y-0 left-0 h-full w-64 bg-[#2ecc71] border-r border-green-300 shadow-md flex flex-col py-6 px-4 z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        {/* Sidebar */}
+        <aside className={`fixed inset-y-0 left-0 h-screen w-64 bg-[#2ecc71] border-r border-green-300 shadow-md flex flex-col py-6 px-4 z-50 transition-transform duration-300 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             <div className="mb-8 flex justify-between items-center">
               <Image src="/images/logo.png" alt="Logo" width={80} height={80} className="rounded-full mx-auto lg:mx-0" />
               <button
@@ -1298,10 +1408,10 @@ export default function Dashboard() {
                 <span className="font-medium">Logout</span>
               </button>
             </div>
-          </aside>
+        </aside>
 
-          {/* Main Content */}
-          <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 overflow-y-auto">
+        {/* Main Content */}
+        <main className="lg:ml-64 min-h-screen p-4 sm:p-6 md:p-8 lg:p-12">
             {/* Mobile Menu Button */}
             <button
               className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-green-600 text-white rounded-lg shadow-lg"
@@ -1316,8 +1426,7 @@ export default function Dashboard() {
             ) : (
               renderContent()
             )}
-          </main>
-        </div>
+        </main>
 
         {/* Edit Station Modal */}
         {editingStation && (
@@ -1371,6 +1480,20 @@ export default function Dashboard() {
         )}
 
       </div>
+
+      {/* Sensor Detail Modal */}
+      {selectedSensor && (
+        <SensorDetailModal
+          isOpen={!!selectedSensor}
+          onClose={() => setSelectedSensor(null)}
+          sensorType={selectedSensor.type}
+          sensorData={sensorData}
+          currentValue={selectedSensor.value}
+          unit={selectedSensor.unit}
+          icon={selectedSensor.icon}
+          title={selectedSensor.title}
+        />
+      )}
     </ProtectedRoute>
   );
 }

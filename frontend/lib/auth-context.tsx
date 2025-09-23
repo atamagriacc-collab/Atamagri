@@ -79,13 +79,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsAdmin(adminClaim);
 
           // Fallback to email check for backward compatibility
-          if (!adminClaim && user.email === 'admin@atamagri.com') {
+          if (!adminClaim && (user.email === 'admin@atamagri.com' || user.email === 'abdulrosyid6122004@gmail.com')) {
             setIsAdmin(true);
+          }
+
+          // Load user's assigned devices
+          const userDeviceRef = ref(database, `users/${user.uid}/devices`);
+          const userDroneRef = ref(database, `users/${user.uid}/drone`);
+
+          const devicesSnapshot = await get(userDeviceRef);
+          const droneSnapshot = await get(userDroneRef);
+
+          if (devicesSnapshot.exists()) {
+            const devices = devicesSnapshot.val();
+            // Handle both object and string formats
+            if (typeof devices === 'object') {
+              setUserDevices(Object.values(devices));
+            } else if (typeof devices === 'string') {
+              setUserDevices([devices]);
+            } else {
+              setUserDevices([]);
+            }
+          } else {
+            setUserDevices([]);
+          }
+
+          if (droneSnapshot.exists()) {
+            setUserDrone(droneSnapshot.val());
+          } else {
+            setUserDrone(null);
           }
         } catch (error) {
           console.error('Error checking admin status:', error);
           // Fallback to email check
-          if (user.email === 'admin@atamagri.com') {
+          if (user.email === 'admin@atamagri.com' || user.email === 'abdulrosyid6122004@gmail.com') {
             setIsAdmin(true);
           } else {
             setIsAdmin(false);
@@ -93,6 +120,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         setIsAdmin(false);
+        setUserDevices([]);
+        setUserDrone(null);
       }
 
       setLoading(false);
