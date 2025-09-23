@@ -330,7 +330,7 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
                     </div>
                     <Badge variant={
                       todayPrediction.trend === 'increasing' ? 'default' :
-                      todayPrediction.trend === 'decreasing' ? 'destructive' : 'secondary'
+                      todayPrediction.trend === 'decreasing' ? 'outline' : 'secondary'
                     }>
                       {todayPrediction.trend}
                     </Badge>
@@ -365,7 +365,7 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
                     </div>
                     <Badge variant={
                       tomorrowPrediction.trend === 'increasing' ? 'default' :
-                      tomorrowPrediction.trend === 'decreasing' ? 'destructive' : 'secondary'
+                      tomorrowPrediction.trend === 'decreasing' ? 'outline' : 'secondary'
                     }>
                       {tomorrowPrediction.trend}
                     </Badge>
@@ -396,7 +396,7 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
                       <p className="text-sm text-gray-600">{rec.description}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge variant={
-                          rec.priority === 'high' ? 'destructive' :
+                          rec.priority === 'high' ? 'outline' :
                           rec.priority === 'medium' ? 'default' : 'secondary'
                         }>
                           {rec.priority}
