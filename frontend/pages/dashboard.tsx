@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Plane, Settings, LogOut, Shield, Plus, CloudRain, Wind, Sun, Thermometer, Droplets, Battery, Activity, RefreshCw, MapPin, Wifi, WifiOff, Edit2, Trash2, Save, X, User, Mail, Phone, Lock, CheckCircle, AlertCircle, Menu, Zap, Gauge } from 'lucide-react';
+import { Home, Plane, Settings, LogOut, Shield, Plus, CloudRain, Wind, Sun, Thermometer, Droplets, Battery, Activity, RefreshCw, MapPin, Wifi, WifiOff, Edit2, Trash2, Save, X, User, Mail, Phone, Lock, CheckCircle, AlertCircle, Menu, Zap, Gauge, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../lib/auth-context';
@@ -1276,7 +1277,9 @@ export default function Dashboard() {
         {/* Sidebar */}
         <aside className={`fixed inset-y-0 left-0 h-screen w-64 bg-[#2ecc71] border-r border-green-300 shadow-md flex flex-col py-6 px-4 z-50 transition-transform duration-300 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             <div className="mb-8 flex justify-between items-center">
-              <Image src="/images/logo.png" alt="Logo" width={80} height={80} className="rounded-full mx-auto lg:mx-0" />
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <Image src="/images/logo.png" alt="Logo" width={80} height={80} className="rounded-full mx-auto lg:mx-0 cursor-pointer" />
+              </Link>
               <button
                 className="lg:hidden text-white hover:bg-white/20 p-2 rounded-lg"
                 onClick={() => setSidebarOpen(false)}
@@ -1285,6 +1288,11 @@ export default function Dashboard() {
               </button>
             </div>
             <nav className="flex-1 flex flex-col gap-1">
+              <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-md text-base font-normal transition-all duration-150 text-left hover:bg-green-100 text-green-900 mb-2 border border-green-600">
+                <ArrowLeft className="w-5 h-5" />
+                <span className="truncate font-normal">Back to Home</span>
+              </Link>
+
               <button
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-base font-normal transition-all duration-150 text-left ${
                   active === 'dashboard' ? 'bg-white/80 text-green-900 shadow-sm' : 'hover:bg-green-100 text-green-900'

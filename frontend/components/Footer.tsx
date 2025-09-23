@@ -49,26 +49,7 @@ export default function Footer() {
             Daratan, RT 2 RW 6, Senden, Tohudan, Colomadu, Karanganyar, Jawa Tengah
           </p>
           <p className="text-neutral-200 text-sm">Phone: <a href="tel:+6281911998210" className="underline">+62 819-1199-8210</a></p>
-          <p className="text-neutral-200 text-sm">Email: <a href="mailto:info@atamagri.com" className="underline">info@atamagri.com</a></p>
-        </div>
-
-        {/* Subscribe Email */}
-        <div className="flex flex-col">
-          <h4 className="font-semibold mb-3 text-accent-yellow">Subscribe</h4>
-          <form className="mt-2 flex flex-wrap gap-2">
-            <input
-              type="email"
-              placeholder="Your email"
-              className="flex-1 min-w-[150px] max-w-xs px-3 py-2 rounded bg-neutral-200 text-primary-900 focus:outline-none"
-              aria-label="Newsletter email"
-            />
-            <button
-              type="submit"
-              className="bg-accent-yellow text-primary-900 px-4 py-2 rounded font-semibold hover:bg-primary-500 hover:text-white transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
+          <p className="text-neutral-200 text-sm">Email: <a href="mailto:atamagriacc@gmail.com" className="underline">atamagriacc@gmail.com</a></p>
         </div>
       </div>
     </footer>
