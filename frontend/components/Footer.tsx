@@ -38,7 +38,6 @@ export default function Footer() {
             <li><Link href="/about" className="hover:underline">About</Link></li>
             <li><Link href="/products" className="hover:underline">Products</Link></li>
             <li><Link href="/contact" className="hover:underline">Contact</Link></li>
-            <li><Link href="/page" className="hover:underline">Dashboard</Link></li>
           </ul>
         </div>
 
@@ -49,7 +48,7 @@ export default function Footer() {
           <p className="text-neutral-200 text-sm leading-relaxed">
             Daratan, RT 2 RW 6, Senden, Tohudan, Colomadu, Karanganyar, Jawa Tengah
           </p>
-          <p className="text-neutral-200 text-sm">Phone: <a href="tel:+628123456789" className="underline">+62 812-3456-789</a></p>
+          <p className="text-neutral-200 text-sm">Phone: <a href="tel:+6281911998210" className="underline">+62 819-1199-8210</a></p>
           <p className="text-neutral-200 text-sm">Email: <a href="mailto:info@atamagri.com" className="underline">info@atamagri.com</a></p>
         </div>
 

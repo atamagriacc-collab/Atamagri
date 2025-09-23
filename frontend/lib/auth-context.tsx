@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
+import { getDatabase, ref, set, get, push, onValue } from 'firebase/database';
 import { useRouter } from 'next/router';
 
 const firebaseConfig = {
@@ -25,6 +26,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
+const database = getDatabase(app);
 
 // Initialize Analytics (only in browser)
 if (typeof window !== 'undefined') {
@@ -39,6 +41,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAdmin: boolean;
+  userDevices: string[];
+  userDrone: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   createUser: (email: string, password: string) => Promise<void>;
@@ -59,6 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userDevices, setUserDevices] = useState<string[]>([]);
+  const [userDrone, setUserDrone] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -151,7 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, signIn, signUp, createUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, userDevices, userDrone, signIn, signUp, createUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
