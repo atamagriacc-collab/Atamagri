@@ -333,12 +333,28 @@ export default function Dashboard() {
     }
   };
 
+  const isValidSensorData = (data: SensorData): boolean => {
+    // Validate sensor ranges to filter out unrealistic values
+    const temp = data.temperature_C ?? data.temperature ?? 0;
+    const humidity = data.humidity_ ?? data.humidity ?? 0;
+    const wind = data.wind_m_s ?? 0;
+    const rain = data.rainrate_mm_h ?? data.rainfall ?? 0;
+
+    // Check for realistic ranges
+    if (temp < -50 || temp > 60) return false; // Realistic temperature range
+    if (humidity < 0 || humidity > 100) return false; // Humidity percentage
+    if (wind < 0 || wind > 50) return false; // Wind speed m/s (50 m/s = 180 km/h is extreme)
+    if (rain < 0 || rain > 300) return false; // Rain rate mm/h (300 is extreme)
+
+    return true;
+  };
+
   const getLatestData = (stationId?: string) => {
     let data;
     if (stationId) {
-      data = sensorData.find(d => d.device_id === stationId) || sensorData[0];
+      data = sensorData.find(d => d.device_id === stationId && isValidSensorData(d)) || sensorData[0];
     } else {
-      data = sensorData[0];
+      data = sensorData.find(d => isValidSensorData(d)) || sensorData[0];
     }
 
     // Normalize field names for compatibility
@@ -367,18 +383,48 @@ export default function Dashboard() {
     return filteredData
       .slice(0, 24)
       .reverse()
-      .map(d => ({
-        time: new Date(d.timestamp || d.received_at || '').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-        temperature: d.temperature_C,
-        humidity: d.humidity_,
-        wind_kmh: d.wind_kmh,
-        wind_ms: d.wind_m_s,
-        rain: d.rainrate_mm_h,
-        light: d.light_lux,
-        voltage: d.sol_voltage_V,
-        current: d.sol_current_mA,
-        power: d.sol_power_W
-      }));
+      .filter((d) => {
+        // Only include data with valid timestamps
+        const timestamp = d.timestamp || d.received_at || '';
+        let date = new Date(timestamp);
+
+        // Try parsing as Unix timestamp if initial parse fails
+        if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+          date = new Date(timestamp * 1000);
+          if (isNaN(date.getTime())) {
+            date = new Date(timestamp);
+          }
+        }
+
+        return !isNaN(date.getTime());
+      })
+      .map((d) => {
+        const timestamp = d.timestamp || d.received_at || '';
+        let date = new Date(timestamp);
+
+        // Try parsing as Unix timestamp if initial parse fails
+        if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+          date = new Date(timestamp * 1000);
+          if (isNaN(date.getTime())) {
+            date = new Date(timestamp);
+          }
+        }
+
+        const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        return {
+          time,
+          temperature: d.temperature_C,
+          humidity: d.humidity_,
+          wind_kmh: d.wind_kmh,
+          wind_ms: d.wind_m_s,
+          rain: d.rainrate_mm_h,
+          light: d.light_lux,
+          voltage: d.sol_voltage_V,
+          current: d.sol_current_mA,
+          power: d.sol_power_W
+        };
+      });
   };
 
   const renderContent = () => {
@@ -566,9 +612,9 @@ export default function Dashboard() {
                     onClick={() => setSelectedSensor({
                       type: 'wind',
                       title: 'Wind Speed',
-                      unit: 'km/h',
+                      unit: 'm/s',
                       icon: <Wind className="w-5 h-5 text-gray-500" />,
-                      value: latestData?.wind_kmh?.toFixed(1) || '--'
+                      value: latestData?.wind_m_s?.toFixed(1) || '--'
                     })}
                   >
                     <CardHeader className="pb-2">
@@ -580,9 +626,9 @@ export default function Dashboard() {
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <Wind className="w-5 h-5 text-gray-500" />
-                        {latestData?.wind_kmh?.toFixed(1) || '--'} km/h
+                        {latestData?.wind_m_s?.toFixed(1) || '--'} m/s
                       </div>
-                      <p className="text-xs text-gray-500">{latestData?.wind_m_s?.toFixed(1) || '--'} m/s</p>
+                      <p className="text-xs text-gray-500">Anemometer Digital</p>
                     </CardContent>
                   </Card>
 
@@ -899,35 +945,50 @@ export default function Dashboard() {
                         {sensorData
                           .filter(data => selectedDevice === 'all' || data.device_id === selectedDevice)
                           .slice(0, 10)
-                          .map((data) => (
-                          <tr key={data.id} className="hover:bg-gray-50">
+                          .map((data, index) => (
+                          <tr key={data.id || `sensor-${index}-${data.timestamp}`} className="hover:bg-gray-50">
                             <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                               {data.device_id}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                              {new Date(data.timestamp).toLocaleString('en-US', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
-                              })}
+                              {(() => {
+                                const timestamp = data.timestamp || data.received_at || '';
+                                let date = new Date(timestamp);
+
+                                // Try parsing as Unix timestamp if initial parse fails
+                                if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+                                  date = new Date(timestamp * 1000);
+                                  if (isNaN(date.getTime())) {
+                                    date = new Date(timestamp);
+                                  }
+                                }
+
+                                return !isNaN(date.getTime())
+                                  ? date.toLocaleString('en-US', {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      second: '2-digit'
+                                    })
+                                  : '--';
+                              })()}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.temperature_C?.toFixed(1)}°C
+                              {data.temperature_C != null ? `${data.temperature_C.toFixed(1)}°C` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.humidity_?.toFixed(0)}%
+                              {data.humidity_ != null ? `${data.humidity_.toFixed(0)}%` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.wind_kmh?.toFixed(1)} km/h
+                              {data.wind_m_s != null ? `${data.wind_m_s.toFixed(1)} m/s` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.rainrate_mm_h?.toFixed(1)} mm/h
+                              {data.rainrate_mm_h != null ? `${data.rainrate_mm_h.toFixed(1)} mm/h` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.light_lux?.toFixed(0)} lux
+                              {data.light_lux != null ? `${data.light_lux.toFixed(0)} lux` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.sol_power_W?.toFixed(2)} W
+                              {data.sol_power_W != null ? `${data.sol_power_W.toFixed(2)} W` : '--'}
                             </td>
                           </tr>
                         ))}
@@ -1247,7 +1308,7 @@ export default function Dashboard() {
                       <CardContent>
                         <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                           <Wind className="w-5 h-5 text-gray-500" />
-                          {stationData?.wind_kmh?.toFixed(1) || '--'} km/h
+                          {stationData?.wind_m_s?.toFixed(1) || '--'} m/s
                         </div>
                       </CardContent>
                     </Card>

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "745512120451",
+    "firebase_url": "https://atamagri-iot-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "atamagri-iot",
+    "storage_bucket": "atamagri-iot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745512120451:android:6cfdd1aab20747f675ebb6",
+        "android_client_info": {
+          "package_name": "com.atamagri.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYJpxwibPgJiH418xvjrLJXv_W6opaNbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

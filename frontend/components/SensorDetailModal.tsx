@@ -115,10 +115,25 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
 
   const exportToCSV = () => {
     const headers = ['Timestamp', `${title} (${unit})`, 'Device'];
-    const rows = sensorData.map(d => {
+    const rows = sensorData.map((d, index) => {
       const value = getSensorValue(d, sensorType);
+      const timestamp = d.timestamp || d.received_at || '';
+      let date = new Date(timestamp);
+
+      // Try parsing as Unix timestamp if initial parse fails
+      if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+        date = new Date(timestamp * 1000);
+        if (isNaN(date.getTime())) {
+          date = new Date(timestamp);
+        }
+      }
+
+      const formattedTimestamp = !isNaN(date.getTime())
+        ? date.toISOString()
+        : `Data_Point_${index + 1}`;
+
       return [
-        new Date(d.timestamp || d.received_at || '').toISOString(),
+        formattedTimestamp,
         value,
         d.device_id || 'Unknown'
       ];
@@ -166,15 +181,47 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
   const getChartData = () => {
     const filteredData = sensorData.slice(0, timeRange === '24h' ? 24 : timeRange === '7d' ? 168 : 720);
 
-    return filteredData.reverse().map(d => ({
-      time: new Date(d.timestamp || d.received_at || '').toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        ...(timeRange !== '24h' && { day: 'numeric', month: 'short' })
-      }),
-      value: getSensorValue(d, sensorType),
-      device: d.device_id
-    }));
+    return filteredData
+      .reverse()
+      .filter((d) => {
+        // Only include data with valid timestamps
+        const timestamp = d.timestamp || d.received_at || '';
+        let date = new Date(timestamp);
+
+        // If timestamp is invalid, try parsing as number (Unix timestamp)
+        if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+          date = new Date(timestamp * 1000);
+          if (isNaN(date.getTime())) {
+            date = new Date(timestamp);
+          }
+        }
+
+        return !isNaN(date.getTime());
+      })
+      .map((d) => {
+        const timestamp = d.timestamp || d.received_at || '';
+        let date = new Date(timestamp);
+
+        // If timestamp is invalid, try parsing as number (Unix timestamp)
+        if (isNaN(date.getTime()) && typeof timestamp === 'number') {
+          date = new Date(timestamp * 1000);
+          if (isNaN(date.getTime())) {
+            date = new Date(timestamp);
+          }
+        }
+
+        const time = date.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          ...(timeRange !== '24h' && { day: 'numeric', month: 'short' })
+        });
+
+        return {
+          time,
+          value: getSensorValue(d, sensorType),
+          device: d.device_id
+        };
+      });
   };
 
   const getChartColor = () => {

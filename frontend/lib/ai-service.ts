@@ -36,8 +36,8 @@ export class AIRecommendationEngine {
     this.geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (this.geminiApiKey) {
       this.genAI = new GoogleGenerativeAI(this.geminiApiKey);
-      // Use gemini-1.5-flash which is the current available model
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      // Use gemini-2.5-flash
+      this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     }
   }
 
