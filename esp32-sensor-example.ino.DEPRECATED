@@ -1,3 +1,16 @@
+// ⚠️ DEPRECATED - DO NOT USE THIS FILE
+// This file uses OLD data format that is no longer compatible with the dashboard
+//
+// Issues with this file:
+// 1. Uses "humidity" instead of "humidity_"
+// 2. Uses "temperature" instead of "temperature_C"
+// 3. Contains NPK fields (nitrogen, phosphorus, potassium) that are no longer used
+// 4. Missing weather sensor fields (wind, rain, light, solar)
+//
+// ✅ Use esp32-sensor-updated.ino instead
+//
+// This file is kept for reference only.
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -57,13 +70,13 @@ void sendSensorData(float temp, float hum, float soil, float ph, float n, float 
   // Create JSON payload
   DynamicJsonDocument doc(1024);
   doc["device_id"] = deviceID;
-  doc["temperature"] = temp;
-  doc["humidity"] = hum;
-  doc["soil_moisture"] = soil;
-  doc["ph"] = ph;
-  doc["nitrogen"] = n;
-  doc["phosphorus"] = p;
-  doc["potassium"] = k;
+  doc["temperature"] = temp;          // ❌ OLD FORMAT
+  doc["humidity"] = hum;              // ❌ OLD FORMAT
+  doc["soil_moisture"] = soil;        // ❌ OLD FORMAT
+  doc["ph"] = ph;                     // ❌ OLD FORMAT
+  doc["nitrogen"] = n;                // ❌ OLD FORMAT
+  doc["phosphorus"] = p;              // ❌ OLD FORMAT
+  doc["potassium"] = k;               // ❌ OLD FORMAT
 
   // Optional: Add simple signature for basic validation
   doc["signature"] = generateSignature(deviceID);

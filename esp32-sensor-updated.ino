@@ -77,7 +77,7 @@ void sendSensorData() {
   doc["wind_kmh"] = doc["wind_m_s"].as<float>() * 3.6;
   doc["rainrate_mm_h"] = random(0, 50) / 10.0;
   doc["temperature_C"] = 20.0 + random(0, 150) / 10.0;
-  doc["humidity_%"] = 40.0 + random(0, 400) / 10.0;
+  doc["humidity_"] = 40.0 + random(0, 400) / 10.0;  // ✅ Fixed: humidity_ (not humidity_%)
   doc["light_lux"] = random(0, 1000) + random(0, 100) / 10.0;
   doc["sol_voltage_V"] = 11.0 + random(0, 20) / 10.0;
   doc["sol_current_mA"] = random(0, 500) + random(0, 100) / 10.0;
@@ -156,7 +156,7 @@ void sendSimpleData() {
   // Minimal JSON data
   String json = "{\"device_id\":\"" + String(device_id) +
                 "\",\"temperature_C\":" + String(25.5) +
-                ",\"humidity_%\":" + String(60.0) + "}";
+                ",\"humidity_\":" + String(60.0) + "}";
 
   Serial.println("Sending minimal data: " + json);
   int responseCode = http.POST(json);

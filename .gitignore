@@ -11,6 +11,10 @@ frontend/.env.local
 .env.local
 .env
 
+# Firebase credentials (NEVER COMMIT)
+serviceAccountKey.json
+**/serviceAccountKey.json
+
 # OS generated files
 .DS_Store
 .DS_Store?

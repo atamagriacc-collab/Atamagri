@@ -1,0 +1,66 @@
+{
+  "rules": {
+    // Global timestamp check - Extended to December 31, 2026
+    ".read": "now < 1798761600000",
+    ".write": "now < 1798761600000",
+
+    // Sensor data - Allow authenticated users to read, allow IoT devices to write
+    "sensor_data": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["device_id", "timestamp", "received_at"],
+      "$sensorId": {
+        ".validate": "newData.hasChildren(['device_id', 'timestamp'])"
+      }
+    },
+
+    // Devices - Only owners and admins can read/write
+    "devices": {
+      ".read": "auth != null",
+      "$deviceId": {
+        ".write": "auth != null && (
+          !data.exists() ||
+          auth.uid == data.child('owner').val() ||
+          root.child('users').child(auth.uid).child('role').val() == 'admin'
+        )",
+        ".validate": "newData.hasChildren(['owner', 'status', 'type'])"
+      }
+    },
+
+    // Users - Users can only read/write their own data
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+      }
+    },
+
+    // Drones - Only owners and admins can read/write
+    "drones": {
+      ".read": "auth != null",
+      "$droneId": {
+        ".write": "auth != null && (
+          !data.exists() ||
+          auth.uid == data.child('owner').val() ||
+          root.child('users').child(auth.uid).child('role').val() == 'admin'
+        )",
+        ".validate": "newData.hasChildren(['owner', 'status'])"
+      }
+    },
+
+    // Stations - Allow authenticated users to read and write
+    "stations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$stationId": {
+        ".validate": "newData.hasChildren(['name', 'location', 'status'])"
+      }
+    },
+
+    // System metadata
+    "system": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    }
+  }
+}
