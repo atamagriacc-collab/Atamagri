@@ -793,15 +793,15 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                      <AreaChart data={chartData}>
+                      <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="time" />
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Area type="monotone" dataKey="wind_kmh" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.6} name="Wind (km/h)" />
-                        <Area type="monotone" dataKey="wind_ms" stackId="2" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Wind (m/s)" />
-                      </AreaChart>
+                        <Line type="monotone" dataKey="wind_kmh" stroke="#8b5cf6" name="Wind (km/h)" strokeWidth={2} />
+                        <Line type="monotone" dataKey="wind_ms" stroke="#10b981" name="Wind (m/s)" strokeWidth={2} />
+                      </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
@@ -833,14 +833,14 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                      <AreaChart data={chartData}>
+                      <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="time" />
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Area type="monotone" dataKey="light" stroke="#fbbf24" fill="#fbbf24" fillOpacity={0.6} name="Light (Lux)" />
-                      </AreaChart>
+                        <Line type="monotone" dataKey="light" stroke="#fbbf24" name="Light (Lux)" strokeWidth={2} />
+                      </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>

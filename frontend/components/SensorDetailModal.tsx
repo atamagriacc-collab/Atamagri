@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download, TrendingUp, Calendar, Brain, ChevronLeft, ChevronRight } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -375,26 +375,20 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id={`gradient-${sensorType}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={chartColor} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
+                <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="time" />
                   <YAxis />
                   <Tooltip />
-                  <Area
+                  <Legend />
+                  <Line
                     type="monotone"
                     dataKey="value"
                     stroke={chartColor}
-                    fillOpacity={1}
-                    fill={`url(#gradient-${sensorType})`}
                     strokeWidth={2}
+                    name={`${title} (${unit})`}
                   />
-                </AreaChart>
+                </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
