@@ -28,7 +28,7 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
   title
 }) => {
   const { user } = useAuth();
-  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
+  const [timeRange, setTimeRange] = useState<'5m' | '10m' | '30m' | '24h' | '7d' | '30d'>('24h');
   const [aiRecommendations, setAiRecommendations] = useState<any[]>([]);
   const [todayPrediction, setTodayPrediction] = useState<any>(null);
   const [tomorrowPrediction, setTomorrowPrediction] = useState<any>(null);
@@ -179,7 +179,30 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
   };
 
   const getChartData = () => {
-    const filteredData = sensorData.slice(0, timeRange === '24h' ? 24 : timeRange === '7d' ? 168 : 720);
+    let dataPoints;
+    switch (timeRange) {
+      case '5m':
+        dataPoints = 5;
+        break;
+      case '10m':
+        dataPoints = 10;
+        break;
+      case '30m':
+        dataPoints = 30;
+        break;
+      case '24h':
+        dataPoints = 24;
+        break;
+      case '7d':
+        dataPoints = 168;
+        break;
+      case '30d':
+        dataPoints = 720;
+        break;
+      default:
+        dataPoints = 24;
+    }
+    const filteredData = sensorData.slice(0, dataPoints);
 
     return filteredData
       .reverse()
@@ -213,7 +236,8 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
         const time = date.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
-          ...(timeRange !== '24h' && { day: 'numeric', month: 'short' })
+          ...(timeRange === '5m' || timeRange === '10m' || timeRange === '30m' ? { second: '2-digit' } : {}),
+          ...((timeRange === '7d' || timeRange === '30d') && { day: 'numeric', month: 'short' })
         });
 
         return {
@@ -282,7 +306,31 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
           </Card>
 
           {/* Time Range Selector */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant={timeRange === '5m' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('5m')}
+              className="flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              5 Minutes
+            </Button>
+            <Button
+              variant={timeRange === '10m' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('10m')}
+              className="flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              10 Minutes
+            </Button>
+            <Button
+              variant={timeRange === '30m' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('30m')}
+              className="flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              30 Minutes
+            </Button>
             <Button
               variant={timeRange === '24h' ? 'default' : 'outline'}
               onClick={() => setTimeRange('24h')}
