@@ -157,7 +157,15 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
       }
 
       const formattedTimestamp = !isNaN(date.getTime())
-        ? date.toISOString()
+        ? date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+          })
         : `Data_Point_${index + 1}`;
 
       return [
