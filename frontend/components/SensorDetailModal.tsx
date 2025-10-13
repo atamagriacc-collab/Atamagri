@@ -114,8 +114,36 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
   };
 
   const exportToCSV = () => {
+    // Calculate data points based on selected time range (same logic as getChartData)
+    let dataPoints;
+    switch (timeRange) {
+      case '5m':
+        dataPoints = 1; // 5 min / 5 min = 1 point
+        break;
+      case '10m':
+        dataPoints = 2; // 10 min / 5 min = 2 points
+        break;
+      case '30m':
+        dataPoints = 6; // 30 min / 5 min = 6 points
+        break;
+      case '24h':
+        dataPoints = 288; // 24 hours * 60 / 5 = 288 points
+        break;
+      case '7d':
+        dataPoints = 2016; // 7 days * 24 * 60 / 5 = 2016 points
+        break;
+      case '30d':
+        dataPoints = 8640; // 30 days * 24 * 60 / 5 = 8640 points
+        break;
+      default:
+        dataPoints = 288;
+    }
+
+    // Filter data according to time range
+    const filteredData = sensorData.slice(0, dataPoints);
+
     const headers = ['Timestamp', `${title} (${unit})`, 'Device'];
-    const rows = sensorData.map((d, index) => {
+    const rows = filteredData.map((d, index) => {
       const value = getSensorValue(d, sensorType);
       const timestamp = d.timestamp || d.received_at || '';
       let date = new Date(timestamp);
@@ -148,7 +176,7 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${sensorType}_data_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${sensorType}_${timeRange}_data_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
