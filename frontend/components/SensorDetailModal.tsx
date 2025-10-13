@@ -180,27 +180,29 @@ const SensorDetailModal: React.FC<SensorDetailModalProps> = ({
 
   const getChartData = () => {
     let dataPoints;
+    // Assuming data is collected every 5 minutes
+    // Calculate data points based on time range
     switch (timeRange) {
       case '5m':
-        dataPoints = 5;
+        dataPoints = 1; // 5 min / 5 min = 1 point
         break;
       case '10m':
-        dataPoints = 10;
+        dataPoints = 2; // 10 min / 5 min = 2 points
         break;
       case '30m':
-        dataPoints = 30;
+        dataPoints = 6; // 30 min / 5 min = 6 points
         break;
       case '24h':
-        dataPoints = 24;
+        dataPoints = 288; // 24 hours * 60 / 5 = 288 points
         break;
       case '7d':
-        dataPoints = 168;
+        dataPoints = 2016; // 7 days * 24 * 60 / 5 = 2016 points
         break;
       case '30d':
-        dataPoints = 720;
+        dataPoints = 8640; // 30 days * 24 * 60 / 5 = 8640 points
         break;
       default:
-        dataPoints = 24;
+        dataPoints = 288;
     }
     const filteredData = sensorData.slice(0, dataPoints);
 

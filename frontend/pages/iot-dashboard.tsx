@@ -153,7 +153,7 @@ export default function IoTDashboard() {
                       <div className="font-medium text-blue-600">💧 {formatValue(data.humidity_, '%')}</div>
                       <div className="font-medium text-yellow-600">☀️ {formatValue(data.light_lux, ' lux')}</div>
                       <div className="font-medium text-gray-600">💨 {formatValue(data.wind_kmh, ' km/h')}</div>
-                      <div className="font-medium text-blue-500">🌧️ {formatValue(data.rainrate_mm_h, ' mm/h')}</div>
+                      <div className="font-medium text-blue-500">🌧️ {formatValue(data.rainrate_mm_h, ' mm')}</div>
                     </div>
                     <div>
                       <div className="font-medium text-orange-600">⚡ {formatValue(data.sol_voltage_V, 'V')}</div>
@@ -196,7 +196,7 @@ export default function IoTDashboard() {
                         <td className="p-2">{formatValue(data.humidity_, '%')}</td>
                         <td className="p-2">{formatValue(data.light_lux, ' lux')}</td>
                         <td className="p-2">{formatValue(data.wind_kmh, ' km/h')}</td>
-                        <td className="p-2">{formatValue(data.rainrate_mm_h, ' mm/h')}</td>
+                        <td className="p-2">{formatValue(data.rainrate_mm_h, ' mm')}</td>
                         <td className="p-2">{formatValue(data.sol_power_W, 'W')}</td>
                         <td className="p-2 text-gray-500">
                           {(data.timestamp || data.received_at) ? new Date(data.timestamp || data.received_at || '').toLocaleTimeString() : 'N/A'}

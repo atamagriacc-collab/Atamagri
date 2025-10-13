@@ -636,24 +636,24 @@ export default function Dashboard() {
                     className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                     onClick={() => setSelectedSensor({
                       type: 'rain',
-                      title: 'Rain Rate',
-                      unit: 'mm/h',
+                      title: 'Rainfall',
+                      unit: 'mm',
                       icon: <CloudRain className="w-5 h-5 text-blue-600" />,
                       value: latestData?.rainrate_mm_h?.toFixed(1) || '--'
                     })}
                   >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-gray-600 flex items-center justify-between">
-                        Rain Rate
+                        Rainfall
                         <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                         <CloudRain className="w-5 h-5 text-blue-600" />
-                        {latestData?.rainrate_mm_h?.toFixed(1) || '--'} mm/h
+                        {latestData?.rainrate_mm_h?.toFixed(1) || '--'} mm
                       </div>
-                      <p className="text-xs text-gray-500">Current precipitation • Click for details</p>
+                      <p className="text-xs text-gray-500">Per tip • Click for details</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -781,7 +781,7 @@ export default function Dashboard() {
                         <Legend />
                         <Line type="monotone" dataKey="temperature" stroke="#ef4444" name="Temperature (°C)" strokeWidth={2} />
                         <Line type="monotone" dataKey="humidity" stroke="#3b82f6" name="Humidity (%)" strokeWidth={2} />
-                        <Line type="monotone" dataKey="rain" stroke="#06b6d4" name="Rain (mm/h)" strokeWidth={2} />
+                        <Line type="monotone" dataKey="rain" stroke="#06b6d4" name="Rainfall (mm)" strokeWidth={2} />
                       </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -932,7 +932,7 @@ export default function Dashboard() {
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Device</th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp</th>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity</th>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wind</th>
@@ -965,6 +965,9 @@ export default function Dashboard() {
 
                                 return !isNaN(date.getTime())
                                   ? date.toLocaleString('en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
                                       hour: '2-digit',
                                       minute: '2-digit',
                                       second: '2-digit'
@@ -982,7 +985,7 @@ export default function Dashboard() {
                               {data.wind_m_s != null ? `${data.wind_m_s.toFixed(1)} m/s` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {data.rainrate_mm_h != null ? `${data.rainrate_mm_h.toFixed(1)} mm/h` : '--'}
+                              {data.rainrate_mm_h != null ? `${data.rainrate_mm_h.toFixed(1)} mm` : '--'}
                             </td>
                             <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                               {data.light_lux != null ? `${data.light_lux.toFixed(0)} lux` : '--'}
@@ -1315,12 +1318,12 @@ export default function Dashboard() {
 
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Rain Rate</CardTitle>
+                        <CardTitle className="text-sm">Rainfall</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-xl md:text-2xl font-bold flex items-center gap-2">
                           <CloudRain className="w-5 h-5 text-blue-600" />
-                          {stationData?.rainrate_mm_h?.toFixed(1) || '--'} mm/h
+                          {stationData?.rainrate_mm_h?.toFixed(1) || '--'} mm
                         </div>
                       </CardContent>
                     </Card>
