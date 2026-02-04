@@ -41,6 +41,18 @@ export default function Footer() {
           </ul>
         </div>
 
+        {/* Products */}
+        <div className="flex flex-col">
+          <h4 className="font-semibold mb-3 text-accent-yellow">Products</h4>
+          <ul className="space-y-2">
+            <li><Link href="/products/atama-sense" className="hover:underline">Atama Sense</Link></li>
+            <li><Link href="/products/atama-climate" className="hover:underline">Atama Climate</Link></li>
+            <li><Link href="/products/atama-vis" className="hover:underline">Atama Vis</Link></li>
+            <li><Link href="/products/atama-academy" className="hover:underline">Atama Academy</Link></li>
+            <li><Link href="/products/atama-custom" className="hover:underline">Atama Custom</Link></li>
+          </ul>
+        </div>
+
         {/* Info & Contact */}
         <div className="flex flex-col">
           <h4 className="font-semibold mb-3 text-accent-yellow">Info & Contact</h4>
