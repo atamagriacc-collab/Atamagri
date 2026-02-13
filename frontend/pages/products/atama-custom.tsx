@@ -2,8 +2,6 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import ProductHero from '../../components/ProductHero';
-import Link from 'next/link';
 
 /* ─────────── Interactive Poster Viewer Component ─────────── */
 function PosterViewer({ src, alt }: { src: string; alt: string }) {
@@ -290,33 +288,6 @@ const process = [
   },
 ];
 
-const caseStudies = [
-  {
-    title: 'Large Rice Plantation',
-    location: 'Central Java',
-    challenge: 'Managing 500+ hectares with limited staff',
-    solution: 'Deployed 50 IoT sensors with centralized monitoring dashboard',
-    result: '30% reduction in water usage, 25% increase in yield',
-    image: '/images/poster-custom.png',
-  },
-  {
-    title: 'Vegetable Cooperative',
-    location: 'West Java',
-    challenge: 'Disease outbreaks causing significant losses',
-    solution: 'Implemented drone monitoring with AI disease detection',
-    result: 'Early detection reduced crop losses by 40%',
-    image: '/images/poster-custom.png',
-  },
-  {
-    title: 'Research Institute',
-    location: 'Yogyakarta',
-    challenge: 'Need for precise environmental data collection',
-    solution: 'Custom sensor network with research-grade accuracy',
-    result: 'Published 3 research papers using collected data',
-    image: '/images/poster-custom.png',
-  },
-];
-
 export default function AtamaCustom() {
   const [formData, setFormData] = useState({
     name: '',
@@ -346,13 +317,15 @@ export default function AtamaCustom() {
       </Head>
       <Header />
       <main className="bg-beige min-h-screen">
-        {/* Hero Section */}
-        <ProductHero 
-          title="Atama Custom" 
-          backgroundImage="/images/products-bg.png" 
-          subtitle="Tailored Technology Solutions for Your Farm" 
-          subtitleClassName="text-white" 
-        />
+        {/* Poster CTA - Interactive Viewer */}
+        <section className="bg-white pt-4 pb-8">
+          <div className="max-w-5xl mx-auto px-4">
+            <PosterViewer
+              src="/images/poster-custom.png"
+              alt="Poster Custom Alat Atamagri - Solusi Pertanian Custom"
+            />
+          </div>
+        </section>
 
         {/* Introduction */}
         <section className="max-w-7xl mx-auto px-4 py-16">
@@ -418,82 +391,6 @@ export default function AtamaCustom() {
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Case Studies */}
-        <section className="bg-primary-900/5 py-16">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-primary-900 text-center mb-4">Success Stories</h2>
-            <p className="text-center text-primary-700 mb-12 max-w-2xl mx-auto">
-              See how our custom solutions have transformed agricultural operations.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {caseStudies.map((study, idx) => (
-                <div key={idx} className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={study.image} 
-                      alt={study.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-bold text-primary-900">{study.title}</h3>
-                      <span className="text-sm text-primary-700/70">{study.location}</span>
-                    </div>
-                    <div className="space-y-3 text-sm">
-                      <div>
-                        <span className="font-semibold text-primary-900">Challenge:</span>
-                        <p className="text-primary-700/80">{study.challenge}</p>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-primary-900">Solution:</span>
-                        <p className="text-primary-700/80">{study.solution}</p>
-                      </div>
-                      <div className="bg-primary-500/10 p-3 rounded-lg">
-                        <span className="font-semibold text-primary-700">Result:</span>
-                        <p className="text-primary-900 font-medium">{study.result}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Interactive Poster Section */}
-        <section id="poster" className="bg-white py-16">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">
-                Poster Custom Alat
-              </h2>
-              <p className="text-primary-700 max-w-2xl mx-auto mb-2">
-                Lihat detail alat dan solusi custom kami melalui poster interaktif. Gunakan kontrol zoom untuk melihat detail, atau masuk ke mode fullscreen.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-primary-700/70">
-                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
-                  Scroll / Pinch to Zoom
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
-                  Fullscreen Available
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-                  Double-click to Toggle Zoom
-                </span>
-              </div>
-            </div>
-
-            <PosterViewer
-              src="/images/poster-custom.png"
-              alt="Poster Custom Alat Atamagri - Solusi Pertanian Custom"
-            />
           </div>
         </section>
 

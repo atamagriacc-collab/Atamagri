@@ -303,10 +303,10 @@ export default function AtamaAcademy() {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link
-                    href="#poster"
+                    href="#features"
                     className="inline-block bg-accent-yellow text-primary-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-white transition-colors"
                   >
-                    View Education Poster
+                    Explore Features
                   </Link>
                   <Link
                     href="/contact"
@@ -318,15 +318,12 @@ export default function AtamaAcademy() {
               </div>
               <div className="hidden lg:block">
                 <div className="relative">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-4">
-                    <img
-                      src="/images/poster-edukasi.png"
-                      alt="Poster Edukasi Atamagri"
-                      className="w-full h-auto rounded-2xl shadow-2xl"
-                    />
-                  </div>
+                  <PosterViewer
+                    src="/images/poster-edukasi.png"
+                    alt="Poster Edukasi Atamagri - Panduan Smart Farming"
+                  />
                   {/* Floating Stats Card */}
-                  <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl">
+                  <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl z-10">
                     <div className="flex items-center gap-3">
                       <div className="bg-primary-500/20 p-3 rounded-full">
                         <svg className="w-6 h-6 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -362,7 +359,7 @@ export default function AtamaAcademy() {
         </section>
 
         {/* Features Section */}
-        <section className="max-w-7xl mx-auto px-4 py-16">
+        <section id="features" className="max-w-7xl mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">Why Learn With Atama Academy?</h2>
             <p className="text-primary-700 max-w-2xl mx-auto">
@@ -379,39 +376,6 @@ export default function AtamaAcademy() {
                 <p className="text-primary-700/80">{feature.description}</p>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Interactive Poster Section */}
-        <section id="poster" className="bg-primary-900/5 py-16">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">
-                Poster Edukasi Pertanian
-              </h2>
-              <p className="text-primary-700 max-w-2xl mx-auto mb-2">
-                Pelajari konsep pertanian cerdas melalui poster edukasi interaktif kami. Gunakan kontrol zoom untuk melihat detail, atau masuk ke mode fullscreen.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-primary-700/70">
-                <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
-                  Scroll / Pinch to Zoom
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
-                  Fullscreen Available
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full shadow-sm">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-                  Double-click to Toggle Zoom
-                </span>
-              </div>
-            </div>
-
-            <PosterViewer
-              src="/images/poster-edukasi.png"
-              alt="Poster Edukasi Pertanian Atamagri - Panduan Smart Farming"
-            />
           </div>
         </section>
 
