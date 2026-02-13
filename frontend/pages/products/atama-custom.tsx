@@ -338,7 +338,7 @@ export default function AtamaCustom() {
               {/* Left — Text */}
               <div>
                 <span className="inline-block bg-accent-yellow text-primary-900 px-4 py-2 rounded-full text-sm font-bold mb-6">
-                  🛠️ Tailored for Your Farm
+                  Tailored for Your Farm
                 </span>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                   Build Your <span className="text-accent-yellow">Custom Solution</span> with Atamagri
