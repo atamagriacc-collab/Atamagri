@@ -202,29 +202,6 @@ export default function AtamaClimate() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="bg-primary-900 py-16">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Get Hyperlocal Weather Data</h2>
-            <p className="text-neutral-200 mb-8 text-lg">
-              Install Atama Climate and start collecting precise weather data for your farm.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link 
-                href="/contact" 
-                className="inline-block bg-accent-yellow text-primary-900 px-8 py-3 rounded-full font-semibold hover:bg-white transition-colors"
-              >
-                Order Now
-              </Link>
-              <Link 
-                href="/products" 
-                className="inline-block border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-primary-900 transition-colors"
-              >
-                View All Products
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </>

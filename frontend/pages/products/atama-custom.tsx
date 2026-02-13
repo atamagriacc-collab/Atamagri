@@ -1,9 +1,218 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ProductHero from '../../components/ProductHero';
 import Link from 'next/link';
+
+/* ─────────── Interactive Poster Viewer Component ─────────── */
+function PosterViewer({ src, alt }: { src: string; alt: string }) {
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  const MIN_SCALE = 0.5;
+  const MAX_SCALE = 5;
+  const ZOOM_STEP = 0.3;
+
+  const handleZoomIn = useCallback(() => {
+    setScale((prev) => Math.min(prev + ZOOM_STEP, MAX_SCALE));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setScale((prev) => {
+      const next = Math.max(prev - ZOOM_STEP, MIN_SCALE);
+      if (next <= 1) setPosition({ x: 0, y: 0 });
+      return next;
+    });
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY < 0) handleZoomIn();
+      else handleZoomOut();
+    },
+    [handleZoomIn, handleZoomOut],
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (scale <= 1) return;
+      e.preventDefault();
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+    },
+    [scale, position],
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging) return;
+      setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+    },
+    [isDragging, dragStart],
+  );
+
+  const handleMouseUp = useCallback(() => setIsDragging(false), []);
+
+  const lastTouchDist = useRef<number | null>(null);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastTouchDist.current = Math.hypot(dx, dy);
+      } else if (e.touches.length === 1 && scale > 1) {
+        setIsDragging(true);
+        setDragStart({ x: e.touches[0].clientX - position.x, y: e.touches[0].clientY - position.y });
+      }
+    },
+    [scale, position],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2 && lastTouchDist.current !== null) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const diff = dist - lastTouchDist.current;
+        setScale((prev) => Math.min(Math.max(prev + diff * 0.005, MIN_SCALE), MAX_SCALE));
+        lastTouchDist.current = dist;
+      } else if (e.touches.length === 1 && isDragging) {
+        setPosition({ x: e.touches[0].clientX - dragStart.x, y: e.touches[0].clientY - dragStart.y });
+      }
+    },
+    [isDragging, dragStart],
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    lastTouchDist.current = null;
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) document.exitFullscreen().catch(() => {});
+      if (e.key === '+' || e.key === '=') handleZoomIn();
+      if (e.key === '-') handleZoomOut();
+      if (e.key === '0') handleReset();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isFullscreen, handleZoomIn, handleZoomOut, handleReset]);
+
+  const zoomPercent = Math.round(scale * 100);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative group rounded-2xl overflow-hidden select-none ${
+        isFullscreen ? 'bg-black flex items-center justify-center' : 'bg-white shadow-xl border border-neutral-200'
+      }`}
+      style={{ touchAction: 'none' }}
+    >
+      {/* Desktop Controls */}
+      <div className="absolute top-4 right-4 z-30 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+           style={{ opacity: isDragging ? 0 : undefined }}>
+        <button onClick={handleZoomOut} disabled={scale <= MIN_SCALE} className="p-1.5 rounded-lg hover:bg-primary-100 text-primary-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Zoom Out (−)">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" /></svg>
+        </button>
+        <span className="text-xs font-semibold text-primary-900 w-12 text-center tabular-nums">{zoomPercent}%</span>
+        <button onClick={handleZoomIn} disabled={scale >= MAX_SCALE} className="p-1.5 rounded-lg hover:bg-primary-100 text-primary-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Zoom In (+)">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
+        </button>
+        <div className="w-px h-5 bg-neutral-300 mx-1" />
+        <button onClick={handleReset} className="p-1.5 rounded-lg hover:bg-primary-100 text-primary-900 transition-colors" title="Reset Zoom (0)">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        </button>
+        <button onClick={toggleFullscreen} className="p-1.5 rounded-lg hover:bg-primary-100 text-primary-900 transition-colors" title="Fullscreen">
+          {isFullscreen ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Controls */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg px-3 py-2 md:hidden">
+        <button onClick={handleZoomOut} disabled={scale <= MIN_SCALE} className="p-2 rounded-lg hover:bg-primary-100 text-primary-900 disabled:opacity-30 transition-colors">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
+        </button>
+        <span className="text-xs font-semibold text-primary-900 w-12 text-center tabular-nums">{zoomPercent}%</span>
+        <button onClick={handleZoomIn} disabled={scale >= MAX_SCALE} className="p-2 rounded-lg hover:bg-primary-100 text-primary-900 disabled:opacity-30 transition-colors">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+        </button>
+        <button onClick={handleReset} className="p-2 rounded-lg hover:bg-primary-100 text-primary-900 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        </button>
+        <button onClick={toggleFullscreen} className="p-2 rounded-lg hover:bg-primary-100 text-primary-900 transition-colors">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+        </button>
+      </div>
+
+      {/* Image Area */}
+      <div
+        className={`overflow-hidden ${isFullscreen ? 'w-screen h-screen' : 'w-full'}`}
+        style={{ cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in' }}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onDoubleClick={() => (scale > 1 ? handleReset() : setScale(2.5))}
+      >
+        <img
+          ref={imageRef}
+          src={src}
+          alt={alt}
+          draggable={false}
+          className="w-full h-auto transition-transform duration-200 ease-out pointer-events-none"
+          style={{
+            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+            transformOrigin: 'center center',
+          }}
+        />
+      </div>
+
+      {/* Hint */}
+      <div className="absolute bottom-4 right-4 z-20 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="bg-black/50 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
+          Scroll to zoom · Double-click to toggle · Drag to pan
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const services = [
   {
@@ -88,7 +297,7 @@ const caseStudies = [
     challenge: 'Managing 500+ hectares with limited staff',
     solution: 'Deployed 50 IoT sensors with centralized monitoring dashboard',
     result: '30% reduction in water usage, 25% increase in yield',
-    image: '/images/farm1.png',
+    image: '/images/poster-custom.png',
   },
   {
     title: 'Vegetable Cooperative',
@@ -96,7 +305,7 @@ const caseStudies = [
     challenge: 'Disease outbreaks causing significant losses',
     solution: 'Implemented drone monitoring with AI disease detection',
     result: 'Early detection reduced crop losses by 40%',
-    image: '/images/farm2.png',
+    image: '/images/poster-custom.png',
   },
   {
     title: 'Research Institute',
@@ -104,7 +313,7 @@ const caseStudies = [
     challenge: 'Need for precise environmental data collection',
     solution: 'Custom sensor network with research-grade accuracy',
     result: 'Published 3 research papers using collected data',
-    image: '/images/farm3.png',
+    image: '/images/poster-custom.png',
   },
 ];
 
@@ -255,6 +464,39 @@ export default function AtamaCustom() {
           </div>
         </section>
 
+        {/* Interactive Poster Section */}
+        <section id="poster" className="bg-white py-16">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">
+                Poster Custom Alat
+              </h2>
+              <p className="text-primary-700 max-w-2xl mx-auto mb-2">
+                Lihat detail alat dan solusi custom kami melalui poster interaktif. Gunakan kontrol zoom untuk melihat detail, atau masuk ke mode fullscreen.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-primary-700/70">
+                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
+                  Scroll / Pinch to Zoom
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+                  Fullscreen Available
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-beige px-3 py-1.5 rounded-full shadow-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                  Double-click to Toggle Zoom
+                </span>
+              </div>
+            </div>
+
+            <PosterViewer
+              src="/images/poster-custom.png"
+              alt="Poster Custom Alat Atamagri - Solusi Pertanian Custom"
+            />
+          </div>
+        </section>
+
         {/* Contact Form */}
         <section className="max-w-7xl mx-auto px-4 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -374,29 +616,6 @@ export default function AtamaCustom() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="bg-primary-900 py-16">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Prefer to Chat First?</h2>
-            <p className="text-neutral-200 mb-8 text-lg">
-              Schedule a free consultation call with our solutions team.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link 
-                href="/contact" 
-                className="inline-block bg-accent-yellow text-primary-900 px-8 py-3 rounded-full font-semibold hover:bg-white transition-colors"
-              >
-                Schedule Call
-              </Link>
-              <Link 
-                href="/products" 
-                className="inline-block border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-primary-900 transition-colors"
-              >
-                View All Products
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </>
