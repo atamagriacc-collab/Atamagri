@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
@@ -317,53 +318,124 @@ export default function AtamaCustom() {
       </Head>
       <Header />
       <main className="bg-beige min-h-screen">
-        {/* Poster CTA - Interactive Viewer */}
-        <section className="bg-white pt-4 pb-8">
-          <div className="max-w-5xl mx-auto px-4">
-            <PosterViewer
-              src="/images/poster-custom.png"
-              alt="Poster Custom Alat Atamagri - Solusi Pertanian Custom"
-            />
+
+        {/* ═══════ Hero Section ═══════ */}
+        <section className="relative bg-gradient-to-br from-primary-900 via-primary-700 to-primary-900 py-20 md:py-28 overflow-hidden">
+          {/* Decorative background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'url("/images/poster-custom.png")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }} />
+          </div>
+          {/* Decorative circles */}
+          <div className="absolute -top-20 -right-20 w-80 h-80 bg-accent-yellow/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-32 -left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
+
+          <div className="relative max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left — Text */}
+              <div>
+                <span className="inline-block bg-accent-yellow text-primary-900 px-4 py-2 rounded-full text-sm font-bold mb-6">
+                  🛠️ Tailored for Your Farm
+                </span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  Build Your <span className="text-accent-yellow">Custom Solution</span> with Atamagri
+                </h1>
+                <p className="text-xl text-neutral-200 mb-8 leading-relaxed">
+                  Every farm is unique. We design and build IoT, AI, and software systems tailored to your specific agricultural challenges and goals.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="#contact"
+                    className="inline-block bg-accent-yellow text-primary-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-white transition-colors"
+                  >
+                    Get Started
+                  </Link>
+                  <Link
+                    href="#services"
+                    className="inline-block border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-colors"
+                  >
+                    Our Services
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right — Poster Viewer */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 shadow-2xl">
+                <PosterViewer
+                  src="/images/poster-custom.png"
+                  alt="Poster Custom Alat Atamagri - Solusi Pertanian Custom"
+                />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Introduction */}
-        <section className="max-w-7xl mx-auto px-4 py-16">
+        {/* ═══════ Stats Bar ═══════ */}
+        <section className="relative -mt-8 z-10 max-w-5xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-xl py-8 px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              {[
+                { value: '50+', label: 'Custom Projects' },
+                { value: '100%', label: 'Tailored Design' },
+                { value: '24/7', label: 'Ongoing Support' },
+                { value: '4.9★', label: 'Client Satisfaction' },
+              ].map((stat, i) => (
+                <div key={i}>
+                  <p className="text-3xl md:text-4xl font-bold text-primary-900">{stat.value}</p>
+                  <p className="text-sm text-primary-700 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════ Introduction ═══════ */}
+        <section className="max-w-7xl mx-auto px-4 pt-20 pb-16">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-block bg-primary-900 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
-              Custom Solutions
-            </span>
             <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-6">
               Your Farm is Unique. Your Technology Should Be Too.
             </h2>
             <p className="text-primary-700 text-lg leading-relaxed">
-              Every farm has its own challenges, conditions, and goals. Our custom solutions team works closely with you to design and implement technology systems that perfectly fit your specific needs. From small family farms to large agricultural enterprises, we create solutions that scale with your growth.
+              From small family farms to large agricultural enterprises, our custom solutions team works closely with you to design and implement technology systems that perfectly fit your needs and scale with your growth.
             </p>
           </div>
         </section>
 
-        {/* Services Grid */}
-        <section className="bg-white py-16">
+        {/* ═══════ Services Grid ═══════ */}
+        <section id="services" className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-primary-900 text-center mb-4">Our Custom Services</h2>
-            <p className="text-center text-primary-700 mb-12 max-w-2xl mx-auto">
-              From hardware to software, we offer comprehensive customization options.
-            </p>
+            <div className="text-center mb-14">
+              <span className="inline-block bg-primary-900/10 text-primary-900 px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                What We Offer
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">Our Custom Services</h2>
+              <p className="text-primary-700 max-w-2xl mx-auto text-lg">
+                End-to-end customization — from hardware to software — designed around your farming operations.
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {services.map((service, idx) => (
-                <div key={idx} className="bg-neutral-200 p-8 rounded-2xl hover:shadow-xl transition-all duration-300">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500/20 text-primary-900 rounded-xl mb-6">
+                <div
+                  key={idx}
+                  className="group relative bg-beige border border-primary-900/5 p-8 rounded-2xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                >
+                  {/* Accent top border */}
+                  <div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-primary-500 to-accent-yellow rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500/15 text-primary-900 rounded-xl mb-6 group-hover:bg-primary-500/25 transition-colors">
                     {service.icon}
                   </div>
                   <h3 className="text-xl font-bold text-primary-900 mb-3">{service.title}</h3>
-                  <p className="text-primary-700/80 mb-4">{service.description}</p>
-                  <ul className="space-y-2">
+                  <p className="text-primary-700/80 mb-5 leading-relaxed">{service.description}</p>
+                  <ul className="space-y-2.5">
                     {service.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-primary-700">
-                        <svg className="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <li key={i} className="flex items-start gap-2.5 text-primary-700">
+                        <svg className="w-5 h-5 text-primary-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        {feature}
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -373,142 +445,182 @@ export default function AtamaCustom() {
           </div>
         </section>
 
-        {/* Process Section */}
-        <section className="max-w-7xl mx-auto px-4 py-16">
-          <h2 className="text-3xl font-bold text-primary-900 text-center mb-4">Our Process</h2>
-          <p className="text-center text-primary-700 mb-12 max-w-2xl mx-auto">
-            A systematic approach to delivering custom solutions that exceed expectations.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {process.map((item, idx) => (
-              <div key={idx} className="relative">
-                <div className="bg-white p-6 rounded-2xl shadow-lg h-full">
-                  <span className="absolute -top-4 -left-4 w-12 h-12 bg-primary-900 text-white rounded-full flex items-center justify-center font-bold text-lg">
-                    {item.step}
-                  </span>
-                  <h3 className="text-xl font-bold text-primary-900 mb-3 mt-4">{item.title}</h3>
-                  <p className="text-primary-700/80">{item.description}</p>
+        {/* ═══════ Process Section ═══════ */}
+        <section className="py-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-14">
+              <span className="inline-block bg-accent-yellow/30 text-primary-900 px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                How It Works
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">Our Process</h2>
+              <p className="text-primary-700 max-w-2xl mx-auto text-lg">
+                A systematic, transparent approach from first conversation to ongoing support.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+              {process.map((item, idx) => (
+                <div key={idx} className="relative group">
+                  {/* Connector line (horizontal on lg, hidden on last col) */}
+                  {idx % 3 !== 2 && (
+                    <div className="hidden lg:block absolute top-8 left-full w-8 border-t-2 border-dashed border-primary-500/30 z-0" />
+                  )}
+                  <div className="bg-white p-7 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-full border border-primary-900/5">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="w-12 h-12 bg-gradient-to-br from-primary-900 to-primary-700 text-white rounded-full flex items-center justify-center font-bold text-lg shrink-0 shadow-lg">
+                        {item.step}
+                      </span>
+                      <h3 className="text-xl font-bold text-primary-900">{item.title}</h3>
+                    </div>
+                    <p className="text-primary-700/80 leading-relaxed">{item.description}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Contact Form */}
-        <section className="max-w-7xl mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-6">
-                Let&apos;s Build Your Custom Solution
-              </h2>
-              <p className="text-primary-700 text-lg mb-6 leading-relaxed">
-                Ready to transform your agricultural operations? Tell us about your needs and our team will get back to you with a tailored proposal.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+        {/* ═══════ Contact Form ═══════ */}
+        <section id="contact" className="bg-white py-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+              {/* Left — Info */}
+              <div className="lg:sticky lg:top-28">
+                <span className="inline-block bg-primary-900/10 text-primary-900 px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                  Get In Touch
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-6">
+                  Let&apos;s Build Your Custom Solution
+                </h2>
+                <p className="text-primary-700 text-lg mb-8 leading-relaxed">
+                  Ready to transform your agricultural operations? Tell us about your needs and our team will craft a tailored proposal for you.
+                </p>
+                <div className="space-y-5">
+                  <div className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-primary-500/15 rounded-xl flex items-center justify-center group-hover:bg-primary-500/25 transition-colors">
+                      <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-700/60 font-medium uppercase tracking-wider">Email</p>
+                      <p className="text-primary-900 font-semibold">atamagriacc@gmail.com</p>
+                    </div>
                   </div>
-                  <span className="text-primary-700">atamagriacc@gmail.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
+                  <div className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-primary-500/15 rounded-xl flex items-center justify-center group-hover:bg-primary-500/25 transition-colors">
+                      <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-700/60 font-medium uppercase tracking-wider">Phone</p>
+                      <p className="text-primary-900 font-semibold">+62 819-1199-8210</p>
+                    </div>
                   </div>
-                  <span className="text-primary-700">+62 819-1199-8210</span>
+                  <div className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-primary-500/15 rounded-xl flex items-center justify-center group-hover:bg-primary-500/25 transition-colors">
+                      <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-700/60 font-medium uppercase tracking-wider">Location</p>
+                      <p className="text-primary-900 font-semibold">Indonesia</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* Right — Form */}
+              <div className="bg-beige p-8 md:p-10 rounded-2xl shadow-xl border border-primary-900/5">
+                <h3 className="text-xl font-bold text-primary-900 mb-6">Send Us Your Requirements</h3>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-primary-900 mb-1.5">Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-primary-900 mb-1.5">Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-primary-900 mb-1.5">Company / Farm</label>
+                      <input
+                        type="text"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                        placeholder="Company or farm name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-primary-900 mb-1.5">Phone</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                        placeholder="+62 xxx-xxxx-xxxx"
+                      />
+                    </div>
+                  </div>
                   <div>
-                    <label className="block text-sm font-medium text-primary-900 mb-1">Name *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
+                    <label className="block text-sm font-medium text-primary-900 mb-1.5">Farm Size</label>
+                    <select
+                      name="farmSize"
+                      value={formData.farmSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                    >
+                      <option value="">Select farm size</option>
+                      <option value="small">Small (&lt; 10 hectares)</option>
+                      <option value="medium">Medium (10–100 hectares)</option>
+                      <option value="large">Large (100–500 hectares)</option>
+                      <option value="enterprise">Enterprise (500+ hectares)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-primary-900 mb-1.5">Tell us about your requirements *</label>
+                    <textarea
+                      name="requirements"
+                      value={formData.requirements}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="Your name"
+                      rows={5}
+                      className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition resize-none"
+                      placeholder="Describe your challenges and what you're looking to achieve..."
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-primary-900 mb-1">Email *</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-primary-900 mb-1">Company/Farm</label>
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="Company or farm name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-primary-900 mb-1">Phone</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder="+62 xxx-xxxx-xxxx"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900 mb-1">Farm Size</label>
-                  <select
-                    name="farmSize"
-                    value={formData.farmSize}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-primary-900 to-primary-700 text-white py-4 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-900 transition-all shadow-lg hover:shadow-xl"
                   >
-                    <option value="">Select farm size</option>
-                    <option value="small">Small (&lt; 10 hectares)</option>
-                    <option value="medium">Medium (10-100 hectares)</option>
-                    <option value="large">Large (100-500 hectares)</option>
-                    <option value="enterprise">Enterprise (500+ hectares)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900 mb-1">Tell us about your requirements *</label>
-                  <textarea
-                    name="requirements"
-                    value={formData.requirements}
-                    onChange={handleChange}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-                    placeholder="Describe your challenges and what you're looking to achieve..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
-                >
-                  Submit Inquiry
-                </button>
-              </form>
+                    Submit Inquiry →
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
