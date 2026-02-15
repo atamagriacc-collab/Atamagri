@@ -4,35 +4,13 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ProductCard from '../../components/ProductCard';
 import ProductHero from '../../components/ProductHero';
-import ProductPackage from '../../components/ProductPackage';
 import { products } from '../../data/products';
 import Link from 'next/link';
 
-const packages = [
-  {
-    title: 'Starter Package',
-    price: '$59',
-    features: [
-      'Collect hyperlocal data 24/7',
-      'Lifetime access to Atama Sense',
-      'Monitor farm in real-time',
-      'AI-powered recommendations',
-    ],
-    accent: 'yellow',
-    image: '/images/starter-package.png',
-  },
-  {
-    title: 'Pro Package',
-    price: '$365',
-    features: [
-      'Includes drone + Atama Sense + Atama Climate',
-      'Full dashboard access',
-      'Priority support',
-    ],
-    accent: 'green',
-    best: true,
-    image: '/images/pro-package.png',
-  },
+const pricingTiers = [
+  { name: 'Paket Uji Coba', price: 'Gratis', highlight: false },
+  { name: 'Bundling', price: 'Rp 3.500.000', highlight: true },
+  { name: 'Kingdom', price: 'Rp 5.500.000', highlight: false },
 ];
 
 const productLinks = [
@@ -178,8 +156,40 @@ export default function Products() {
           </div>
         </section>
 
-        {/* Product Packages */}
-        <ProductPackage packages={packages} />
+        {/* Pricing Preview */}
+        <section className="max-w-5xl mx-auto px-4 py-16">
+          <div className="text-center mb-10">
+            <h2 className="font-serif text-3xl font-bold text-primary-900 mb-3">Paket Harga</h2>
+            <p className="text-primary-700 max-w-xl mx-auto">Pilih paket yang sesuai dengan kebutuhan Anda.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {pricingTiers.map((tier, idx) => (
+              <div
+                key={idx}
+                className={`rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                  tier.highlight
+                    ? 'bg-gradient-to-br from-primary-900 to-primary-700 text-white shadow-xl ring-2 ring-primary-500'
+                    : 'bg-white shadow-lg'
+                }`}
+              >
+                <h3 className={`text-lg font-bold mb-3 ${tier.highlight ? 'text-white' : 'text-primary-900'}`}>
+                  {tier.name}
+                </h3>
+                <p className={`text-3xl md:text-4xl font-extrabold ${tier.highlight ? 'text-accent-yellow' : 'text-primary-900'}`}>
+                  {tier.price}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link
+              href="/pricing"
+              className="inline-block bg-primary-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-700 transition-colors shadow-lg"
+            >
+              Lihat Detail Harga
+            </Link>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
