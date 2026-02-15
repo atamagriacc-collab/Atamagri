@@ -331,20 +331,6 @@ export default function AtamaAcademy() {
                     src="/images/poster-edukasi.png"
                     alt="Poster Edukasi Atamagri - Panduan Smart Farming"
                   />
-                  {/* Floating Stats Card */}
-                  <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl z-10">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary-500/20 p-3 rounded-full">
-                        <svg className="w-6 h-6 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="block text-2xl font-bold text-primary-900">3,500+</span>
-                        <span className="text-sm text-primary-700/70">Active Students</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
