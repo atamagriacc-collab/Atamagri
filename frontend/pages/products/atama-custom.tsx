@@ -373,27 +373,8 @@ export default function AtamaCustom() {
           </div>
         </section>
 
-        {/* ═══════ Stats Bar ═══════ */}
-        <section className="relative -mt-8 z-10 max-w-5xl mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-xl py-8 px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              {[
-                { value: '50+', label: 'Custom Projects' },
-                { value: '100%', label: 'Tailored Design' },
-                { value: '24/7', label: 'Ongoing Support' },
-                { value: '4.9★', label: 'Client Satisfaction' },
-              ].map((stat, i) => (
-                <div key={i}>
-                  <p className="text-3xl md:text-4xl font-bold text-primary-900">{stat.value}</p>
-                  <p className="text-sm text-primary-700 mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ═══════ Introduction ═══════ */}
-        <section className="max-w-7xl mx-auto px-4 pt-20 pb-16">
+        <section className="max-w-7xl mx-auto px-4 pt-16 pb-16">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-6">
               Your Farm is Unique. Your Technology Should Be Too.

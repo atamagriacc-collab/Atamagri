@@ -241,13 +241,6 @@ function PosterViewer({ src, alt }: { src: string; alt: string }) {
 }
 
 /* ─────────── Page Data ─────────── */
-const stats = [
-  { value: '3,500+', label: 'Students Enrolled' },
-  { value: '25+', label: 'Expert Instructors' },
-  { value: '50+', label: 'Courses Available' },
-  { value: '98%', label: 'Satisfaction Rate' },
-];
-
 const features = [
   {
     icon: (
@@ -353,22 +346,6 @@ export default function AtamaAcademy() {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="bg-white py-12 -mt-8 relative z-10">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="bg-primary-900 rounded-2xl p-8 shadow-xl">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {stats.map((stat, idx) => (
-                  <div key={idx} className="text-center">
-                    <span className="block text-3xl md:text-4xl font-bold text-accent-yellow mb-1">{stat.value}</span>
-                    <span className="text-neutral-200 text-sm">{stat.label}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
