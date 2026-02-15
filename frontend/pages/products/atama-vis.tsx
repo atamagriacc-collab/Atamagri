@@ -118,9 +118,6 @@ export default function AtamaVis() {
                   className="w-full h-auto rounded-lg shadow-xl"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 bg-primary-700 rounded-full p-4 shadow-lg">
-                <span className="text-white font-bold text-xl">$365</span>
-              </div>
             </div>
           </div>
         </section>

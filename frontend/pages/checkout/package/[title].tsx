@@ -7,27 +7,40 @@ import Link from 'next/link';
 
 const packages = [
   {
-    title: 'Starter Package',
-    price: '$59',
+    title: 'Paket Uji Coba',
+    price: 'Gratis',
     features: [
-      'Collect hyperlocal data 24/7',
-      'Lifetime access to Atama Sense',
-      'Monitor farm in real-time',
-      'AI-powered recommendations',
+      'Akses Atama Sense (dashboard)',
+      'Monitoring data dasar',
+      'Uji coba fitur AI terbatas',
+      'Durasi 14 hari',
     ],
     accent: 'yellow',
     image: '/images/starter-package.png',
   },
   {
-    title: 'Pro Package',
-    price: '$365',
+    title: 'Paket Bundling',
+    price: 'Rp 3.500.000',
     features: [
-      'Includes drone + Atama Sense + Atama Climate',
+      'Atama Sense + Atama Climate + Atama Vis',
       'Full dashboard access',
+      'AI-powered recommendations',
       'Priority support',
     ],
     accent: 'green',
     best: true,
+    image: '/images/pro-package.png',
+  },
+  {
+    title: 'Paket Kingdom',
+    price: 'Rp 5.500.000',
+    features: [
+      'Semua fitur Bundling',
+      'Atama Custom modules',
+      'Dedicated account manager',
+      'Enterprise support 24/7',
+    ],
+    accent: 'green',
     image: '/images/pro-package.png',
   },
 ];

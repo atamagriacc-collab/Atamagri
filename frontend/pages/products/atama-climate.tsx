@@ -121,9 +121,6 @@ export default function AtamaClimate() {
                     alt="Atama Climate Weather Station"
                     className="w-full h-auto max-h-72 object-contain rounded-lg mx-auto"
                   />
-                  <div className="absolute -bottom-4 -right-4 bg-accent-yellow rounded-xl px-5 py-3 shadow-lg">
-                    <span className="text-primary-900 font-bold text-xl">$365</span>
-                  </div>
                 </div>
               </div>
             </div>

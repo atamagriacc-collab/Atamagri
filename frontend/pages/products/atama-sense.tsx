@@ -109,9 +109,6 @@ export default function AtamaSense() {
                   className="w-full h-auto rounded-lg shadow-xl"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 bg-accent-yellow rounded-full p-4 shadow-lg">
-                <span className="text-primary-900 font-bold text-xl">$59</span>
-              </div>
             </div>
           </div>
         </section>
