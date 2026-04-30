@@ -99,8 +99,9 @@ nslookup firebase2._domainkey.atamagri.app
 
 ### Verify with Vercel CLI
 ```bash
-export VERCEL_TOKEN="UUeFpdF8N5hWrfqHbu5olO2s"
-vercel dns ls atamagri.app --token="$VERCEL_TOKEN" --team="team_wKAZT3BDfEf2l4ye3SuEuxNW"
+# Use the token stored in your .env.local file
+export VERCEL_TOKEN="$VERCEL_TOKEN"  # Never hardcode tokens — load from .env.local
+vercel dns ls atamagri.app --token="$VERCEL_TOKEN" --team="$VERCEL_TEAM_ID"
 ```
 
 ## Summary
@@ -116,7 +117,7 @@ vercel dns ls atamagri.app --token="$VERCEL_TOKEN" --team="team_wKAZT3BDfEf2l4ye
 - **Domain Registrar**: Vercel
 - **Domain Expiry**: July 25, 2026
 - **Auto-Renewal**: Enabled
-- **Team ID**: team_wKAZT3BDfEf2l4ye3SuEuxNW
+- **Team ID**: (stored in .env.local as VERCEL_TEAM_ID)
 - **Project ID**: atamagri-iot
 - **Support Email**: atamagriacc@gmail.com
 
