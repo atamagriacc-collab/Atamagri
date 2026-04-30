@@ -6,6 +6,7 @@ export default function Document() {
       <Head>
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#2ecc71" />
+        <meta name="dicoding:email" content="hmazka19@gmail.com" />
 
         {/* Favicon */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
