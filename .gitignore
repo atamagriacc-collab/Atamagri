@@ -37,3 +37,5 @@ yarn-error.log*
 # Cache
 .cache/
 frontend/.cache/
+
+/Ringkasan_Teknologi_dan_Fitur_ATAMAGRI.docx
